@@ -17,7 +17,7 @@ public:
 		}
 
 		v8::Local<v8::Array> jsArr = v8::Local<v8::Array>::Cast(jsVal);
-    for (int i = 0; i < jsArr->Length(); i++) {
+    for (int i = 0; i < (int)jsArr->Length(); i++) {
       if (!Converter::assertType(jsArr->Get(i))) {
 				Nan::ThrowError(
 					Nan::New(
@@ -38,7 +38,7 @@ public:
 
 	static v8::Local<v8::Value> wrap(std::vector<CastType> vec) {
 		v8::Local<v8::Array> jsArr = Nan::New<v8::Array>(vec.size());
-		for (int i = 0; i < jsArr->Length(); i++) {
+		for (int i = 0; i < (int)jsArr->Length(); i++) {
 			jsArr->Set(i, Converter::wrap(vec.at(i)));
 		}
 		return jsArr;
