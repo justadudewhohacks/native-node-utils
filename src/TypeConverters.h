@@ -57,7 +57,7 @@ public:
 	}
 
 	static float unwrap(v8::Local<v8::Value> jsVal) {
-		return jsVal->NumberValue();
+		return (float)jsVal->NumberValue();
 	}
 };
 
@@ -110,7 +110,7 @@ public:
 	}
 
 	static float unwrap(v8::Local<v8::Value> jsVal) {
-		return jsVal->NumberValue();
+		return (float)jsVal->NumberValue();
 	}
 };
 
