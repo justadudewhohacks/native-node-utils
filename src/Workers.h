@@ -61,28 +61,35 @@ public:
 	}
 };
 
-#define FF_TRY_UNWRAP_ARGS(ff_methodName, ff_worker)\
+#define FF_RETHROW(ff_err) \
+	tryCatch.Reset();\
+	Nan::ThrowError(ff_err);\
+	tryCatch.ReThrow();\
+	return;\
+
+#define FF_TRY_UNWRAP_ARGS(ff_methodName, applyUnwrappers)\
 	Nan::TryCatch tryCatch;\
-	if (\
-		ff_worker.unwrapRequiredArgs(info) ||\
-		(ff_worker.hasOptArgsObject(info) && ff_worker.unwrapOptionalArgsFromOpts(info)) ||\
-		(!ff_worker.hasOptArgsObject(info) && ff_worker.unwrapOptionalArgs(info))\
-	) {\
+	if (applyUnwrappers) {\
 		std::string err = std::string(*Nan::Utf8String(tryCatch.Exception()->ToString()));\
-		tryCatch.Reset();\
-		Nan::ThrowError(\
+		FF_RETHROW(\
 			Nan::New(\
 				std::string(ff_methodName)\
 				+ std::string(" - ")\
 				+ err\
 			).ToLocalChecked()\
 		);\
-		tryCatch.ReThrow();\
-		return;\
 	}
 
+#define FF_WORKER_TRY_UNWRAP_ARGS(ff_methodName, ff_worker)\
+	FF_TRY_UNWRAP_ARGS(\
+		ff_methodName,\
+		ff_worker.unwrapRequiredArgs(info) || \
+		(ff_worker.hasOptArgsObject(info) && ff_worker.unwrapOptionalArgsFromOpts(info)) || \
+		(!ff_worker.hasOptArgsObject(info) && ff_worker.unwrapOptionalArgs(info))\
+	)
+
 #define FF_WORKER_SYNC(ff_methodName, ff_worker)\
-	FF_TRY_UNWRAP_ARGS(ff_methodName, ff_worker);\
+	FF_WORKER_TRY_UNWRAP_ARGS(ff_methodName, ff_worker);\
 	const char* err = ff_worker.execute();\
 	if (!std::string(err).empty()) {\
 		tryCatch.Reset();\
@@ -97,7 +104,7 @@ public:
 	}
 
 #define FF_WORKER_ASYNC(ff_methodName, ff_Worker, ff_worker)\
-	FF_TRY_UNWRAP_ARGS(ff_methodName, ff_worker);\
+	FF_WORKER_TRY_UNWRAP_ARGS(ff_methodName, ff_worker);\
 	if (!hasArg(info.Length() - 1, info) || !info[info.Length() - 1]->IsFunction()) {\
 		tryCatch.Reset();\
 		Nan::ThrowError(\
