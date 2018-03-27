@@ -28,6 +28,10 @@ public:
 		return ConverterType::unwrap(jsVal);
 	}
 
+	static T* unwrapPtr(v8::Local<v8::Value> jsVal) {
+		return ConverterType::unwrapPtr(jsVal);
+	}
+
 	static v8::Local<v8::Value> wrap(T val) {
 		return ConverterType::wrap(val);
 	}
@@ -48,6 +52,10 @@ public:
 		return ConverterType::unwrap(jsVal);
 	}
 
+	static T* unwrapPtr(v8::Local<v8::Value> jsVal) {
+		return ConverterType::unwrapPtr(jsVal);
+	}
+
 	static v8::Local<v8::Value> wrap(T val) {
 		return ConverterType::wrap(val);
 	}
@@ -59,7 +67,7 @@ public:
 	static bool optProp(T* val, const char* prop, v8::Local<v8::Object> opts) {
 		Nan::TryCatch tryCatch;
 		if (
-			Nan::HasOwnProperty(opts, Nan::New(prop).ToLocalChecked()).FromJust() 
+			Nan::HasOwnProperty(opts, Nan::New(prop).ToLocalChecked()).FromJust()
 			&& ConverterType::unwrap(val, Nan::Get(opts, Nan::New(prop).ToLocalChecked()).ToLocalChecked())
 			) {
 			if (tryCatch.HasCaught()) {

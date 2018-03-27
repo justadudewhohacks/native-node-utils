@@ -1,3 +1,5 @@
+#include <nan.h>
+
 #ifndef __FF_GENERICASYNCWORKER_H__
 #define __FF_GENERICASYNCWORKER_H__
 
@@ -59,35 +61,28 @@ public:
 	}
 };
 
-#define FF_RETHROW(ff_err) \
-	tryCatch.Reset();\
-	Nan::ThrowError(ff_err);\
-	tryCatch.ReThrow();\
-	return;\
-
-#define FF_TRY_UNWRAP_ARGS(ff_methodName, applyUnwrappers)\
+#define FF_TRY_UNWRAP_ARGS(ff_methodName, ff_worker)\
 	Nan::TryCatch tryCatch;\
-	if (applyUnwrappers) {\
+	if (\
+		ff_worker.unwrapRequiredArgs(info) ||\
+		(ff_worker.hasOptArgsObject(info) && ff_worker.unwrapOptionalArgsFromOpts(info)) ||\
+		(!ff_worker.hasOptArgsObject(info) && ff_worker.unwrapOptionalArgs(info))\
+	) {\
 		std::string err = std::string(*Nan::Utf8String(tryCatch.Exception()->ToString()));\
-		FF_RETHROW(\
+		tryCatch.Reset();\
+		Nan::ThrowError(\
 			Nan::New(\
 				std::string(ff_methodName)\
 				+ std::string(" - ")\
 				+ err\
 			).ToLocalChecked()\
 		);\
+		tryCatch.ReThrow();\
+		return;\
 	}
 
-#define FF_WORKER_TRY_UNWRAP_ARGS(ff_methodName, ff_worker)\
-	FF_TRY_UNWRAP_ARGS(\
-		ff_methodName,\
-		ff_worker.unwrapRequiredArgs(info) || \
-		(ff_worker.hasOptArgsObject(info) && ff_worker.unwrapOptionalArgsFromOpts(info)) || \
-		(!ff_worker.hasOptArgsObject(info) && ff_worker.unwrapOptionalArgs(info))\
-	)
-
 #define FF_WORKER_SYNC(ff_methodName, ff_worker)\
-	FF_WORKER_TRY_UNWRAP_ARGS(ff_methodName, ff_worker);\
+	FF_TRY_UNWRAP_ARGS(ff_methodName, ff_worker);\
 	const char* err = ff_worker.execute();\
 	if (!std::string(err).empty()) {\
 		tryCatch.Reset();\
@@ -102,7 +97,7 @@ public:
 	}
 
 #define FF_WORKER_ASYNC(ff_methodName, ff_Worker, ff_worker)\
-	FF_WORKER_TRY_UNWRAP_ARGS(ff_methodName, ff_worker);\
+	FF_TRY_UNWRAP_ARGS(ff_methodName, ff_worker);\
 	if (!hasArg(info.Length() - 1, info) || !info[info.Length() - 1]->IsFunction()) {\
 		tryCatch.Reset();\
 		Nan::ThrowError(\

@@ -127,7 +127,7 @@ public:
 		return jsVal->IsString();
 	}
 
-	static std::string unwrap(v8::Local<v8::Value> jsVal) {	
+	static std::string unwrap(v8::Local<v8::Value> jsVal) {
 		return std::string(*Nan::Utf8String(jsVal->ToString()));
 	}
 
