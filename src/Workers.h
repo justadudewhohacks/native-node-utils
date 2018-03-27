@@ -1,3 +1,5 @@
+#include <nan.h>
+
 #ifndef __FF_GENERICASYNCWORKER_H__
 #define __FF_GENERICASYNCWORKER_H__
 
