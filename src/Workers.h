@@ -15,9 +15,9 @@ public:
 	~GenericAsyncWorker() {}
 
 	void Execute() {
-		const char* err = ctx.execute();
+		std::string err = ctx.execute();
 		if (!std::string(err).empty()) {
-			this->SetErrorMessage(err);
+			this->SetErrorMessage(err.c_str());
 		}
 	}
 
@@ -36,7 +36,7 @@ public:
 
 struct SimpleWorker {
 public:
-	const char* execute() {
+	std::string execute() {
 		return "";
 	}
 
@@ -90,13 +90,13 @@ public:
 
 #define FF_WORKER_SYNC(ff_methodName, ff_worker)\
 	FF_WORKER_TRY_UNWRAP_ARGS(ff_methodName, ff_worker);\
-	const char* err = ff_worker.execute();\
-	if (!std::string(err).empty()) {\
+	std::string err = ff_worker.execute();\
+	if (!err.empty()) {\
 		tryCatch.Reset();\
 		Nan::ThrowError(\
 			Nan::New(\
 				std::string(ff_methodName)\
-				+ std::string(err)\
+				+ err\
 			).ToLocalChecked()\
 		);\
 		tryCatch.ReThrow();\
