@@ -1,3 +1,4 @@
+#include <memory>
 #include <nan.h>
 #include <IWorker.h>
 
