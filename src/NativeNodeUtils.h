@@ -80,7 +80,8 @@ namespace FF {
 			if (worker->applyUnwrappers(info)) {
 				v8::Local<v8::Value> argv[] = { Nan::Error(tryCatch.formatCatchedError(methodName)), Nan::Null() };
 				tryCatch.Reset();
-				callback->Call(2, argv);
+				Nan::AsyncResource resource("native-node-utils:AsyncBinding::run");
+				resource.runInAsyncScope(Nan::GetCurrentContext()->Global(), **callback, 2, argv);
 				return;
 			}
 			Nan::AsyncQueueWorker(new FF::AsyncWorker(callback, worker));

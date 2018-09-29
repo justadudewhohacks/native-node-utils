@@ -27,13 +27,15 @@ namespace FF {
 		void HandleOKCallback() {
 			Nan::HandleScope scope;
 			v8::Local<v8::Value> argv[] = { Nan::Null(), worker->getReturnValue() };
-			callback->Call(2, argv);
+			Nan::AsyncResource resource("native-node-utils:AsyncWorker::HandleOKCallback");
+			resource.runInAsyncScope(Nan::GetCurrentContext()->Global(), **callback, 2, argv);
 		}
 
 		void HandleErrorCallback() {
 			Nan::HandleScope scope;
 			v8::Local<v8::Value> argv[] = { Nan::New(this->ErrorMessage()).ToLocalChecked(), Nan::Null() };
-			callback->Call(2, argv);
+			Nan::AsyncResource resource("native-node-utils:AsyncWorker::HandleErrorCallback");
+			resource.runInAsyncScope(Nan::GetCurrentContext()->Global(), **callback, 2, argv);
 		}
 	};
 
