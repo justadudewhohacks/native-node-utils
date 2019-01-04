@@ -22,7 +22,7 @@ public:
   }
 
 	static int unwrap(v8::Local<v8::Value> jsVal) {
-		return jsVal->Int32Value();
+		return jsVal->ToInt32(Nan::GetCurrentContext()).ToLocalChecked()->Value();
 	}
 };
 
@@ -40,7 +40,7 @@ public:
 	}
 
 	static uint unwrap(v8::Local<v8::Value> jsVal) {
-		return jsVal->Uint32Value();
+		return (uint)jsVal->ToUint32(Nan::GetCurrentContext()).ToLocalChecked()->Value();
 	}
 };
 
@@ -57,7 +57,7 @@ public:
 	}
 
 	static float unwrap(v8::Local<v8::Value> jsVal) {
-		return (float)jsVal->NumberValue();
+		return (float)jsVal->ToNumber(Nan::GetCurrentContext()).ToLocalChecked()->Value();
 	}
 };
 
@@ -92,7 +92,7 @@ public:
 	}
 
 	static double unwrap(v8::Local<v8::Value> jsVal) {
-		return jsVal->NumberValue();
+		return jsVal->ToNumber(Nan::GetCurrentContext()).ToLocalChecked()->Value();
 	}
 };
 
@@ -110,7 +110,7 @@ public:
 	}
 
 	static float unwrap(v8::Local<v8::Value> jsVal) {
-		return (float)jsVal->NumberValue();
+		return (float)jsVal->ToNumber(Nan::GetCurrentContext()).ToLocalChecked()->Value();
 	}
 };
 

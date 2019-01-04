@@ -13,6 +13,6 @@
   },
   "homepage": "https://github.com/justadudewhohacks/native-node-utils#readme",
   "dependencies": {
-    "nan": "^2.11.0"
+    "nan": "^2.12.1"
   }
 }
