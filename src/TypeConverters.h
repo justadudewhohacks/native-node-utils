@@ -75,7 +75,7 @@ public:
 	}
 
 	static bool unwrap(v8::Local<v8::Value> jsVal) {
-		return jsVal->BooleanValue();
+		return jsVal->ToBoolean(Nan::GetCurrentContext()).ToLocalChecked()->Value();
 	}
 };
 
@@ -128,7 +128,7 @@ public:
 	}
 
 	static std::string unwrap(v8::Local<v8::Value> jsVal) {
-		return std::string(*Nan::Utf8String(jsVal->ToString()));
+		return std::string(*Nan::Utf8String(jsVal->ToString(Nan::GetCurrentContext()).ToLocalChecked()));
 	}
 
 	static v8::Local<v8::Value> wrap(std::string val) {
