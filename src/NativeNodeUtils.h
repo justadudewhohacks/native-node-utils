@@ -25,7 +25,7 @@ namespace FF {
 			return Nan::New(
 				Utils::formatError(
 					std::string(methodName),
-					*Nan::Utf8String(Exception()->ToString())
+					*Nan::Utf8String(Exception()->ToString(Nan::GetCurrentContext()).ToLocalChecked())
 				)
 			).ToLocalChecked();
 		}

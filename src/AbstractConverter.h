@@ -64,6 +64,19 @@ public:
 		return ConverterType::unwrap(val, jsVal);
 	}
 
+	static bool prop(T* val, const char* prop, v8::Local<v8::Object> opts) {
+		if (!Nan::HasOwnProperty(opts, Nan::New(prop).ToLocalChecked()).FromJust()) {
+			Nan::ThrowError(
+				Nan::New(
+					std::string("expected object to have property: ") + std::string(prop)
+				).ToLocalChecked()
+			);
+			return true;
+		}
+
+		return AbstractConverter::optProp(val, prop, opts);
+	}
+
 	static bool optProp(T* val, const char* prop, v8::Local<v8::Object> opts) {
 		Nan::TryCatch tryCatch;
 		if (

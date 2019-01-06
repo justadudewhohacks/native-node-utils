@@ -15,11 +15,11 @@ public:
 	}
 
 	static T unwrap(v8::Local<v8::Value> jsVal) {
-		return Nan::ObjectWrap::Unwrap<Clazz>(jsVal->ToObject())->getNativeObject();
+		return Nan::ObjectWrap::Unwrap<Clazz>(jsVal->ToObject(Nan::GetCurrentContext()).ToLocalChecked())->getNativeObject();
 	}
 
 	static T* unwrapPtr(v8::Local<v8::Value> jsVal) {
-		return Nan::ObjectWrap::Unwrap<Clazz>(jsVal->ToObject())->getNativeObjectPtr();
+		return Nan::ObjectWrap::Unwrap<Clazz>(jsVal->ToObject(Nan::GetCurrentContext()).ToLocalChecked())->getNativeObjectPtr();
 	}
 
 	static v8::Local<v8::Value> wrap(T val) {
