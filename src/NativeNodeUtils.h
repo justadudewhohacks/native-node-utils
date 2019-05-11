@@ -6,18 +6,12 @@
 #include "AsyncWorker.h"
 #include "IWorker.h"
 #include "SimpleWorker.h"
+#include "utils.h"
 
 #ifndef __FF_NATIVENODEUTILS_H__
 #define __FF_NATIVENODEUTILS_H__
 
 namespace FF {
-
-	class Utils {
-	public:
-		static std::string formatError(std::string methodName, std::string err) {
-			return std::string(methodName) + std::string(" - ") + err;
-		}
-	};
 
 	class TryCatch : public Nan::TryCatch {
 	public:

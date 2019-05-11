@@ -1,4 +1,5 @@
 #include "AbstractConverter.h"
+#include "utils.h"
 
 #ifndef __FF_INSTANCECONVERTER_H__
 #define __FF_INSTANCECONVERTER_H__
@@ -23,7 +24,7 @@ public:
 	}
 
 	static v8::Local<v8::Value> wrap(T val) {
-		v8::Local<v8::Object> jsObj = Nan::NewInstance(Nan::New(Clazz::constructor)->GetFunction()).ToLocalChecked();
+		v8::Local<v8::Object> jsObj = FF::newInstance(Nan::New(Clazz::constructor));
 		*Nan::ObjectWrap::Unwrap<Clazz>(jsObj)->getNativeObjectPtr() = val;
 		return jsObj;
 	}
