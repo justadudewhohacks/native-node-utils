@@ -22,7 +22,7 @@ public:
   }
 
 	static int unwrap(v8::Local<v8::Value> jsVal) {
-		return jsVal->ToInt32(Nan::GetCurrentContext()).ToLocalChecked()->Value();
+		return Nan::To<int>(jsVal).ToChecked();
 	}
 };
 
@@ -40,7 +40,7 @@ public:
 	}
 
 	static uint unwrap(v8::Local<v8::Value> jsVal) {
-		return (uint)jsVal->ToUint32(Nan::GetCurrentContext()).ToLocalChecked()->Value();
+		return Nan::To<uint>(jsVal).ToChecked();
 	}
 };
 
@@ -57,7 +57,7 @@ public:
 	}
 
 	static float unwrap(v8::Local<v8::Value> jsVal) {
-		return (float)jsVal->ToNumber(Nan::GetCurrentContext()).ToLocalChecked()->Value();
+		return (unsigned long)Nan::To<uint>(jsVal).ToChecked();
 	}
 };
 
@@ -75,7 +75,7 @@ public:
 	}
 
 	static bool unwrap(v8::Local<v8::Value> jsVal) {
-		return jsVal->ToBoolean(Nan::GetCurrentContext()).ToLocalChecked()->Value();
+		return Nan::To<bool>(jsVal).ToChecked();
 	}
 };
 
@@ -92,7 +92,7 @@ public:
 	}
 
 	static double unwrap(v8::Local<v8::Value> jsVal) {
-		return jsVal->ToNumber(Nan::GetCurrentContext()).ToLocalChecked()->Value();
+		return Nan::To<double>(jsVal).ToChecked();
 	}
 };
 
@@ -110,7 +110,7 @@ public:
 	}
 
 	static float unwrap(v8::Local<v8::Value> jsVal) {
-		return (float)jsVal->ToNumber(Nan::GetCurrentContext()).ToLocalChecked()->Value();
+		return (float)Nan::To<double>(jsVal).ToChecked();
 	}
 };
 

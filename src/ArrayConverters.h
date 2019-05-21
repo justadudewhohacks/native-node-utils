@@ -18,7 +18,7 @@ public:
 
 		v8::Local<v8::Array> jsArr = v8::Local<v8::Array>::Cast(jsVal);
     for (int i = 0; i < (int)jsArr->Length(); i++) {
-      if (!Converter::assertType(jsArr->Get(i))) {
+      if (!Converter::assertType(Nan::Get(jsArr, i).ToLocalChecked())) {
 				Nan::ThrowError(
 					Nan::New(
 						std::string("expected array element at index ")
@@ -29,8 +29,8 @@ public:
         );
         return true;
       }
-
-			CastType obj = (CastType)Converter::unwrap(jsArr->Get(i));
+	  
+			CastType obj = (CastType)Converter::unwrap(Nan::Get(jsArr, i).ToLocalChecked());
       vec->push_back(obj);
     }
 		return false;
@@ -39,7 +39,7 @@ public:
 	static v8::Local<v8::Value> wrap(std::vector<CastType> vec) {
 		v8::Local<v8::Array> jsArr = Nan::New<v8::Array>(vec.size());
 		for (int i = 0; i < (int)jsArr->Length(); i++) {
-			jsArr->Set(i, Converter::wrap(vec.at(i)));
+			Nan::Set(jsArr, i, Converter::wrap(vec.at(i)));
 		}
 		return jsArr;
 	}
@@ -73,7 +73,7 @@ public:
 		for (uint i = 0; i < jsArr->Length(); i++) {
 			std::vector<CastType> vec;
 			Nan::TryCatch tryCatch;
-			if (ArrayConverterType<Converter, T, CastType>::unwrap(&vec, jsArr->Get(i))) {
+			if (ArrayConverterType<Converter, T, CastType>::unwrap(&vec, Nan::Get(jsArr, i).ToLocalChecked())) {
 				tryCatch.ReThrow();
 				return true;
 			}
@@ -85,7 +85,7 @@ public:
 	static v8::Local<v8::Value> wrap(std::vector<std::vector<CastType>> vec) {
 		v8::Local<v8::Array> jsArr = Nan::New<v8::Array>(vec.size());
 		for (uint i = 0; i < jsArr->Length(); i++) {
-			jsArr->Set(i, ArrayConverterType<Converter, T, CastType>::wrap(vec.at(i)));
+			Nan::Set(jsArr, i, ArrayConverterType<Converter, T, CastType>::wrap(vec.at(i)));
 		}
 		return jsArr;
 	}
