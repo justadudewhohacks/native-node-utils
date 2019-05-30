@@ -31,7 +31,7 @@ public:
 				return true;
 			}
 	  
-			ElementCastType obj = (ElementCastType)ElementConverterImpl::unwrap(Nan::Get(jsArr, i).ToLocalChecked());
+			ElementCastType obj = (ElementCastType)ElementConverterImpl::unwrapUnchecked(Nan::Get(jsArr, i).ToLocalChecked());
 			vec->push_back(obj);
 		}
 

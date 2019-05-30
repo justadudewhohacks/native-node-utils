@@ -18,12 +18,8 @@ public:
 		return !jsVal->IsNull() && !jsVal->IsUndefined() && Nan::New(Clazz::constructor)->HasInstance(jsVal);
 	}
 
-	static Clazz::Type unwrap(v8::Local<v8::Value> jsVal) {
+	static Clazz::Type unwrapUnchecked(v8::Local<v8::Value> jsVal) {
 		return Nan::ObjectWrap::Unwrap<Clazz>(jsVal->ToObject(Nan::GetCurrentContext()).ToLocalChecked())->getNativeObject();
-	}
-
-	static Clazz::Type* unwrapPtr(v8::Local<v8::Value> jsVal) {
-		return Nan::ObjectWrap::Unwrap<Clazz>(jsVal->ToObject(Nan::GetCurrentContext()).ToLocalChecked())->getNativeObjectPtr();
 	}
 
 	static v8::Local<v8::Value> wrap(Clazz::Type val) {

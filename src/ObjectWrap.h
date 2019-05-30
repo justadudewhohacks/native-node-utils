@@ -17,19 +17,24 @@ namespace FF {
 		TClass::Type getNativeObject() { return self; }
 		void setNativeObject(TClass::Type obj) { self = obj; }
 
-		typedef AbstractConverter<InstanceConverterImpl<TClass>> Converter;
+		typedef InstanceConverterImpl<TClass> ConverterImpl;
+		typedef AbstractConverter<ConverterImpl> Converter;
 
 		template<class ElementCastType>
-		class ArrayWithCastConverter : public AbstractConverter<ArrayConverterImpl<TClass::Converter, ElementCastType>> {};
+		class ArrayWithCastConverter : public AbstractConverter<ArrayConverterImpl<TClass::ConverterImpl, ElementCastType>> {};
 
 		template<class ElementCastType>
-		class ArrayOfArraysWithCastConverter : public AbstractConverter<ArrayOfArraysConverterImpl<TClass::Converter, ElementCastType>> {};
+		class ArrayOfArraysWithCastConverter : public AbstractConverter<ArrayOfArraysConverterImpl<TClass::ConverterImpl, ElementCastType>> {};
 
 		class ArrayConverter : public ArrayWithCastConverter<TClass::Type> {};
 		class ArrayOfArraysConverter : public ArrayOfArraysWithCastConverter<TClass::Type> {};
 
 		static TClass* unwrap(v8::Local<v8::Value> obj) {
 			return Nan::ObjectWrap::Unwrap<TClass>(obj->ToObject(Nan::GetCurrentContext()).ToLocalChecked());
+		}
+
+		static TClass::Type unwrapSelf(Nan::NAN_METHOD_ARGS_TYPE info) {
+			return TClass::ConverterImpl::unwrapUnchecked(info.This());
 		}
 	};
 
