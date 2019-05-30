@@ -2,8 +2,8 @@
 #include <nan.h>
 #include <IWorker.h>
 
-#ifndef __FF_ASYNCWORKER_H__
-#define __FF_ASYNCWORKER_H__
+#ifndef __FF_ASYNC_WORKER_H__
+#define __FF_ASYNC_WORKER_H__
 
 namespace FF {
 

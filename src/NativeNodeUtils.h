@@ -1,35 +1,18 @@
-#include <memory>
-#include <nan.h>
-#include <iostream>
-#include "ArrayConverters.h"
-#include "TypeConverters.h"
+#include "AbstractConverter.h"
+#include "ArrayConverter.h"
+#include "ArrayOfArraysConverter.h"
 #include "AsyncWorker.h"
+#include "Converters.h"
+#include "InstanceConverter.h"
 #include "IWorker.h"
-#include "SimpleWorker.h"
+#include "ObjectWrap.h"
+#include "PrimitiveTypeConverters.h"
 #include "utils.h"
 
-#ifndef __FF_NATIVENODEUTILS_H__
-#define __FF_NATIVENODEUTILS_H__
+#ifndef __FF_NATIVE_NODE_UTILS_H__
+#define __FF_NATIVE_NODE_UTILS_H__
 
 namespace FF {
-
-	class TryCatch : public Nan::TryCatch {
-	public:
-		v8::Local<v8::String> formatCatchedError(std::string methodName) {
-			return Nan::New(
-				Utils::formatError(
-					std::string(methodName),
-					*Nan::Utf8String(Exception()->ToString(Nan::GetCurrentContext()).ToLocalChecked())
-				)
-			).ToLocalChecked();
-		}
-
-		void throwNew(v8::Local<v8::Value> err) {
-			Reset();
-			Nan::ThrowError(err);
-			ReThrow();
-		}
-	};
 
 	struct SyncBinding {
 	public:

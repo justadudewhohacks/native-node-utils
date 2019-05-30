@@ -1,153 +1,110 @@
-#include <nan.h>
+#include "utils.h"
 
-#ifndef __FF_GENERICCONVERTER_H__
-#define __FF_GENERICCONVERTER_H__
+#ifndef __FF_ABSTRACT_CONVERTER_H__
+#define __FF_ABSTRACT_CONVERTER_H__
 
-typedef unsigned int uint;
+namespace FF {
 
-static inline bool hasArg(int argN, Nan::NAN_METHOD_ARGS_TYPE info) {
-	return argN < info.Length();
-}
-
-static inline bool isCallback(int argN, Nan::NAN_METHOD_ARGS_TYPE info) {
-	return hasArg(argN, info) && info[argN]->IsFunction();
-}
-
-template <class ConverterType, class T>
-class SingleTypeConverter {
-public:
-	static const char* getTypeName() {
-		return ConverterType::getTypeName();
-	}
-
-	static bool assertType(v8::Local<v8::Value> jsVal) {
-		return ConverterType::assertType(jsVal);
-	}
-
-	static T unwrap(v8::Local<v8::Value> jsVal) {
-		return ConverterType::unwrap(jsVal);
-	}
-
-	static T* unwrapPtr(v8::Local<v8::Value> jsVal) {
-		return ConverterType::unwrapPtr(jsVal);
-	}
-
-	static v8::Local<v8::Value> wrap(T val) {
-		return ConverterType::wrap(val);
-	}
-
-	static bool unwrap(T* val, v8::Local<v8::Value> jsVal) {
-		if (!assertType(jsVal)) {
-			return true;
-		}
-		*val = unwrap(jsVal);
-		return false;
-	}
-};
-
-template <class ConverterType, class T>
-class AbstractConverter {
-public:
-	static T unwrap(v8::Local<v8::Value> jsVal) {
-		return ConverterType::unwrap(jsVal);
-	}
-
-	static T* unwrapPtr(v8::Local<v8::Value> jsVal) {
-		return ConverterType::unwrapPtr(jsVal);
-	}
-
-	static v8::Local<v8::Value> wrap(T val) {
-		return ConverterType::wrap(val);
-	}
-
-	static bool unwrap(T* val, v8::Local<v8::Value> jsVal) {
-		return ConverterType::unwrap(val, jsVal);
-	}
-
-	static bool prop(T* val, const char* prop, v8::Local<v8::Object> opts) {
-		if (!Nan::HasOwnProperty(opts, Nan::New(prop).ToLocalChecked()).FromJust()) {
-			Nan::ThrowError(
-				Nan::New(
-					std::string("expected object to have property: ") + std::string(prop)
-				).ToLocalChecked()
-			);
-			return true;
+	/*
+	ConverterImpl implements:
+		static const char* getTypeName()
+		static v8::Local<v8::Value> wrap(ConverterImpl::Type val)
+		static bool unwrap(ConverterImpl::Type* pVal, v8::Local<v8::Value> jsVal)
+	*/
+	template <class ConverterImpl>
+	class AbstractConverter {
+	public:
+		static v8::Local<v8::Value> wrap(ConverterImpl::Type val) {
+			return ConverterImpl::wrap(val);
 		}
 
-		return AbstractConverter::optProp(val, prop, opts);
-	}
-
-	static bool optProp(T* val, const char* prop, v8::Local<v8::Object> opts) {
-		Nan::TryCatch tryCatch;
-		if (
-			Nan::HasOwnProperty(opts, Nan::New(prop).ToLocalChecked()).FromJust()
-			&& ConverterType::unwrap(val, Nan::Get(opts, Nan::New(prop).ToLocalChecked()).ToLocalChecked())
-			) {
-			if (tryCatch.HasCaught()) {
-				tryCatch.ReThrow();
+		static bool arg(int argN, ConverterImpl::Type* val, Nan::NAN_METHOD_ARGS_TYPE info) {
+			Nan::TryCatch tryCatch;
+			if (!hasArg(argN, info) || ConverterImpl::unwrap(val, info[argN])) {
+				if (tryCatch.HasCaught()) {
+					tryCatch.ReThrow();
+				}
+				else {
+					Nan::ThrowError(
+						Nan::New(
+							std::string("expected argument ")
+							+ std::to_string(argN)
+							+ std::string(" to be of type ")
+							+ std::string(ConverterImpl::getTypeName())
+						).ToLocalChecked()
+					);
+					tryCatch.ReThrow();
+				}
+				return true;
 			}
-			else {
-				Nan::ThrowError(
-					Nan::New(
-						std::string("expected property ")
-						+ std::string(prop)
-						+ std::string(" to be of type ")
-						+ std::string(ConverterType::getTypeName())
-					).ToLocalChecked()
-				);
-				tryCatch.ReThrow();
-			}
-			return true;
-		}
-		return false;
-	}
-
-	static bool arg(int argN, T* val, Nan::NAN_METHOD_ARGS_TYPE info) {
-		Nan::TryCatch tryCatch;
-		if (!hasArg(argN, info) || ConverterType::unwrap(val, info[argN])) {
-			if (tryCatch.HasCaught()) {
-				tryCatch.ReThrow();
-			} else {
-				Nan::ThrowError(
-					Nan::New(
-						std::string("expected argument ")
-						+ std::to_string(argN)
-						+ std::string(" to be of type ")
-						+ std::string(ConverterType::getTypeName())
-					).ToLocalChecked()
-				);
-				tryCatch.ReThrow();
-			}
-			return true;
-		}
-		return false;
-	}
-
-	static bool optArg(int argN, T* val, Nan::NAN_METHOD_ARGS_TYPE info) {
-		if (isCallback(argN, info)) {
 			return false;
 		}
 
-		Nan::TryCatch tryCatch;
-		if (hasArg(argN, info) && ConverterType::unwrap(val, info[argN])) {
-			if (tryCatch.HasCaught()) {
-				tryCatch.ReThrow();
+		static bool optArg(int argN, ConverterImpl::Type* val, Nan::NAN_METHOD_ARGS_TYPE info) {
+			if (hasArg(info, argN) && info[argN]->IsFunction()) {
+				return false;
 			}
-			else {
+
+			Nan::TryCatch tryCatch;
+			if (hasArg(argN, info) && ConverterImpl::unwrap(val, info[argN])) {
+				if (tryCatch.HasCaught()) {
+					tryCatch.ReThrow();
+				}
+				else {
+					Nan::ThrowError(
+						Nan::New(
+							std::string("expected argument ")
+							+ std::to_string(argN)
+							+ std::string(" to be of type ")
+							+ std::string(ConverterImpl::getTypeName())
+						).ToLocalChecked()
+					);
+					tryCatch.ReThrow();
+				}
+				return true;
+			}
+			return false;
+		}
+
+		static bool prop(ConverterImpl::Type* val, const char* prop, v8::Local<v8::Object> opts) {
+			if (!Nan::HasOwnProperty(opts, Nan::New(prop).ToLocalChecked()).FromJust()) {
 				Nan::ThrowError(
 					Nan::New(
-						std::string("expected argument ")
-						+ std::to_string(argN)
-						+ std::string(" to be of type ")
-						+ std::string(ConverterType::getTypeName())
+						std::string("expected object to have property: ") + std::string(prop)
 					).ToLocalChecked()
 				);
-				tryCatch.ReThrow();
+				return true;
 			}
-			return true;
+
+			return AbstractConverterImpl::optProp(val, prop, opts);
 		}
-		return false;
-	}
-};
+
+		static bool optProp(ConverterImpl::Type* val, const char* prop, v8::Local<v8::Object> opts) {
+			Nan::TryCatch tryCatch;
+			if (
+				Nan::HasOwnProperty(opts, Nan::New(prop).ToLocalChecked()).FromJust()
+				&& ConverterImpl::unwrap(val, Nan::Get(opts, Nan::New(prop).ToLocalChecked()).ToLocalChecked())
+				) {
+				if (tryCatch.HasCaught()) {
+					tryCatch.ReThrow();
+				}
+				else {
+					Nan::ThrowError(
+						Nan::New(
+							std::string("expected property ")
+							+ std::string(prop)
+							+ std::string(" to be of type ")
+							+ std::string(ConverterImpl::getTypeName())
+						).ToLocalChecked()
+					);
+					tryCatch.ReThrow();
+				}
+				return true;
+			}
+			return false;
+		}
+	};
+}
+
 
 #endif
