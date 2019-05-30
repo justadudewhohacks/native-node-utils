@@ -21,10 +21,10 @@ namespace FF {
 		typedef AbstractConverter<ConverterImpl> Converter;
 
 		template<class ElementCastType>
-		class ArrayWithCastConverter : public AbstractConverter<ArrayWithCastConverterImpl<TClass::ConverterImpl, ElementCastType>> {};
+		class ArrayWithCastConverter : public AbstractConverter<ArrayConverterImpl<TClass::ConverterImpl, ElementCastType>> {};
 
 		template<class ElementCastType>
-		class ArrayOfArraysWithCastConverter : public AbstractConverter<ArrayOfArraysWithCastConverterImpl<TClass::ConverterImpl, ElementCastType>> {};
+		class ArrayOfArraysWithCastConverter : public AbstractConverter<ArrayOfArraysConverterImpl<TClass::ConverterImpl, ElementCastType>> {};
 
 		class ArrayConverter : public ArrayWithCastConverter<TClass::Type> {};
 		class ArrayOfArraysConverter : public ArrayOfArraysWithCastConverter<TClass::Type> {};

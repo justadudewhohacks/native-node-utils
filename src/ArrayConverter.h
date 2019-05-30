@@ -5,8 +5,8 @@
 
 namespace FF {
 
-	template <class ElementConverterImpl, class ElementCastType>
-	class ArrayWithCastConverterImpl {
+	template <class ElementConverterImpl, class ElementCastType = ElementConverterImpl::Type>
+	class ArrayConverterImpl {
 	public:
 		typedef std::vector<ElementCastType> Type;
 
@@ -48,9 +48,6 @@ namespace FF {
 			return jsArr;
 		}
 	};
-
-	template <class ElementConverterImpl>
-	class ArrayConverterImpl : public ArrayWithCastConverterImpl<ElementConverterImpl, ElementConverterImpl::Type> {};
 
 }
 #endif
