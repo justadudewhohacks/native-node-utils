@@ -3,48 +3,54 @@
 #ifndef __FF_ARRAY_CONVERTER_H__
 #define __FF_ARRAY_CONVERTER_H__
 
-template <class ElementConverterImpl, class ElementCastType = ElementConverterImpl::Type>
-class ArrayConverterImpl {
-public:
-	typedef std::vector<ElementCastType> Type;
+namespace FF {
 
-	static const char* getTypeName() {
-		return "array";
-	}
+	template <class ElementConverterImpl, class ElementCastType>
+	class ArrayWithCastConverterImpl {
+	public:
+		typedef std::vector<ElementCastType> Type;
 
-	static bool unwrap(std::vector<ElementCastType>* vec, v8::Local<v8::Value> jsVal) {
-		if (!jsVal->IsArray()) {
-			return true;
+		static const char* getTypeName() {
+			return "array";
 		}
 
-		v8::Local<v8::Array> jsArr = v8::Local<v8::Array>::Cast(jsVal);
-		for (int i = 0; i < (int)jsArr->Length(); i++) {
-			if (!ElementConverterImpl::assertType(Nan::Get(jsArr, i).ToLocalChecked())) {
-				Nan::ThrowError(
-					Nan::New(
-						std::string("expected array element at index ")
-						+ std::to_string(i)
-						+ std::string(" to be of type ")
-						+ std::string(ElementConverterImpl::getTypeName())
-					).ToLocalChecked()
-				);
+		static bool unwrap(std::vector<ElementCastType>* vec, v8::Local<v8::Value> jsVal) {
+			if (!jsVal->IsArray()) {
 				return true;
 			}
-	  
-			ElementCastType obj = (ElementCastType)ElementConverterImpl::unwrapUnchecked(Nan::Get(jsArr, i).ToLocalChecked());
-			vec->push_back(obj);
+
+			v8::Local<v8::Array> jsArr = v8::Local<v8::Array>::Cast(jsVal);
+			for (int i = 0; i < (int)jsArr->Length(); i++) {
+				if (!ElementConverterImpl::assertType(Nan::Get(jsArr, i).ToLocalChecked())) {
+					Nan::ThrowError(
+						Nan::New(
+							std::string("expected array element at index ")
+							+ std::to_string(i)
+							+ std::string(" to be of type ")
+							+ std::string(ElementConverterImpl::getTypeName())
+						).ToLocalChecked()
+					);
+					return true;
+				}
+
+				ElementCastType obj = (ElementCastType)ElementConverterImpl::unwrapUnchecked(Nan::Get(jsArr, i).ToLocalChecked());
+				vec->push_back(obj);
+			}
+
+			return false;
 		}
 
-		return false;
-	}
-
-	static v8::Local<v8::Value> wrap(std::vector<ElementCastType> vec) {
-		v8::Local<v8::Array> jsArr = Nan::New<v8::Array>(vec.size());
-		for (int i = 0; i < (int)jsArr->Length(); i++) {
-			Nan::Set(jsArr, i, ElementConverterImpl::wrap(vec.at(i)));
+		static v8::Local<v8::Value> wrap(std::vector<ElementCastType> vec) {
+			v8::Local<v8::Array> jsArr = Nan::New<v8::Array>(vec.size());
+			for (int i = 0; i < (int)jsArr->Length(); i++) {
+				Nan::Set(jsArr, i, ElementConverterImpl::wrap(vec.at(i)));
+			}
+			return jsArr;
 		}
-		return jsArr;
-	}
-};
+	};
 
+	template <class ElementConverterImpl>
+	class ArrayConverterImpl : public ArrayWithCastConverterImpl<ElementConverterImpl, ElementConverterImpl::Type> {};
+
+}
 #endif

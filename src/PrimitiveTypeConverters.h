@@ -116,7 +116,7 @@ namespace FF {
 		}
 	};
 
-	class StringConverterImpl : public PrimitiveTypeUnwrapper<StringConverterImpl> {
+	class StringConverterImpl : public UnwrapperBase<StringConverterImpl> {
 	public:
 		typedef std::string Type;
 
