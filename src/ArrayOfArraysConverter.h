@@ -5,16 +5,14 @@
 
 namespace FF {
 
-	template <class ElementConverterImpl, class ElementCastType = ElementConverterImpl::Type>
-	class ArrayOfArraysConverterImpl : private ArrayConverterType<ElementConverterImpl, ElementCastType> {
+	template <class ElementConverterImpl, class ElementCastType>
+	class ArrayOfArraysConverterImpl : private ArrayConverterImpl<ElementConverterImpl, ElementCastType> {
 	public:
-		typedef std::vector<std::vector<ElementCastType>> Type;
-
 		static const char* getTypeName() {
 			return "array";
 		}
 
-		static bool unwrap(Type* vecOfVecs, v8::Local<v8::Value> jsVal) {
+		static bool unwrap(std::vector<std::vector<ElementCastType>>* vecOfVecs, v8::Local<v8::Value> jsVal) {
 			if (!jsVal->IsArray()) {
 				return true;
 			}
@@ -32,7 +30,7 @@ namespace FF {
 			return false;
 		}
 
-		static v8::Local<v8::Value> wrap(Type vec) {
+		static v8::Local<v8::Value> wrap(std::vector<std::vector<ElementCastType>> vec) {
 			v8::Local<v8::Array> jsArr = Nan::New<v8::Array>(vec.size());
 			for (uint i = 0; i < jsArr->Length(); i++) {
 				Nan::Set(jsArr, i, ArrayConverterType<Converter, T, CastType>::wrap(vec.at(i)));

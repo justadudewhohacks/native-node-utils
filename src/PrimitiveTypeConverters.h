@@ -6,18 +6,16 @@
 
 namespace FF {
 
-	template<typename ConverterImpl>
-	class PrimitiveTypeConverter : public UnwrapperBase<ConverterImpl> {
+	template<class ConverterImpl, class T>
+	class PrimitiveTypeConverter : public UnwrapperBase<ConverterImpl, T> {
 	public:
-		static v8::Local<v8::Value> wrap(ConverterImpl::Type val) {
+		static v8::Local<v8::Value> wrap(T val) {
 			return Nan::New(val);
 		}
 	};
 
-	class IntConverterImpl : public PrimitiveTypeConverter<IntConverterImpl> {
+	class IntConverterImpl : public PrimitiveTypeConverter<IntConverterImpl, int> {
 	public:
-		typedef int Type;
-
 		static const char* getTypeName() {
 			return "int";
 		}
@@ -31,10 +29,8 @@ namespace FF {
 		}
 	};
 
-	class UintConverterImpl : public PrimitiveTypeConverter<UintConverterImpl> {
+	class UintConverterImpl : public PrimitiveTypeConverter<UintConverterImpl, uint> {
 	public:
-		typedef uint Type;
-
 		static const char* getTypeName() {
 			return "uint";
 		}
@@ -48,10 +44,8 @@ namespace FF {
 		}
 	};
 
-	class UlongConverterImpl : public PrimitiveTypeConverter<UlongConverterImpl> {
+	class UlongConverterImpl : public PrimitiveTypeConverter<UlongConverterImpl, unsigned long> {
 	public:
-		typedef unsigned long Type;
-
 		static const char* getTypeName() {
 			return "ulong";
 		}
@@ -65,10 +59,8 @@ namespace FF {
 		}
 	};
 
-	class BoolConverterImpl : public PrimitiveTypeConverter<BoolConverterImpl> {
+	class BoolConverterImpl : public PrimitiveTypeConverter<BoolConverterImpl, bool> {
 	public:
-		typedef bool Type;
-
 		static const char* getTypeName() {
 			return "bool";
 		}
@@ -82,10 +74,8 @@ namespace FF {
 		}
 	};
 
-	class DoubleConverterImpl : public PrimitiveTypeConverter<DoubleConverterImpl> {
+	class DoubleConverterImpl : public PrimitiveTypeConverter<DoubleConverterImpl, double> {
 	public:
-		typedef double Type;
-
 		static const char* getTypeName() {
 			return "double";
 		}
@@ -99,10 +89,8 @@ namespace FF {
 		}
 	};
 
-	class FloatConverterImpl : public PrimitiveTypeConverter<FloatConverterImpl> {
+	class FloatConverterImpl : public PrimitiveTypeConverter<FloatConverterImpl, float> {
 	public:
-		typedef float Type;
-
 		static const char* getTypeName() {
 			return "float";
 		}
@@ -116,10 +104,8 @@ namespace FF {
 		}
 	};
 
-	class StringConverterImpl : public UnwrapperBase<StringConverterImpl> {
+	class StringConverterImpl : public UnwrapperBase<StringConverterImpl, std::string> {
 	public:
-		typedef std::string Type;
-
 		static const char* getTypeName() {
 			return "string";
 		}

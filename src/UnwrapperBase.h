@@ -5,10 +5,10 @@
 
 namespace FF {
 
-	template<typename UnwrapperImpl>
+	template<typename UnwrapperImpl, class T>
 	class UnwrapperBase {
 	public:
-		static bool unwrap(UnwrapperImpl::Type* pVal, v8::Local<v8::Value> jsVal) {
+		static bool unwrap(T* pVal, v8::Local<v8::Value> jsVal) {
 			if (!UnwrapperImpl::assertType(jsVal)) {
 				return true;
 			}

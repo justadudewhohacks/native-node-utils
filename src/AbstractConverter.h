@@ -6,21 +6,27 @@
 namespace FF {
 
 	/*
-	ConverterImpl implements:
+	ConverterImpl<ConverterImpl, T> implements:
 		static const char* getTypeName()
-		static v8::Local<v8::Value> wrap(ConverterImpl::Type val)
-		static bool unwrap(ConverterImpl::Type* pVal, v8::Local<v8::Value> jsVal)
+		static v8::Local<v8::Value> wrap(T val)
+		static bool unwrap(T* pVal, v8::Local<v8::Value> jsVal)
 	*/
-	template <class ConverterImpl>
+	template <class ConverterImpl, class T>
 	class AbstractConverter {
 	public:
-		static v8::Local<v8::Value> wrap(ConverterImpl::Type val) {
+		static v8::Local<v8::Value> wrap(T val) {
 			return ConverterImpl::wrap(val);
 		}
 
-		static bool arg(int argN, ConverterImpl::Type* val, Nan::NAN_METHOD_ARGS_TYPE info) {
+		static T unwrapUnchecked(v8::Local<v8::Value> jsVal) {
+			T val;
+			unwrap(&val, jsVal);
+			return val;
+		}
+
+		static bool arg(int argN, T* val, Nan::NAN_METHOD_ARGS_TYPE info) {
 			Nan::TryCatch tryCatch;
-			if (!hasArg(argN, info) || ConverterImpl::unwrap(val, info[argN])) {
+			if (!hasArg(info, argN) || ConverterImpl::unwrap(val, info[argN])) {
 				if (tryCatch.HasCaught()) {
 					tryCatch.ReThrow();
 				}
@@ -40,13 +46,13 @@ namespace FF {
 			return false;
 		}
 
-		static bool optArg(int argN, ConverterImpl::Type* val, Nan::NAN_METHOD_ARGS_TYPE info) {
+		static bool optArg(int argN, T* val, Nan::NAN_METHOD_ARGS_TYPE info) {
 			if (hasArg(info, argN) && info[argN]->IsFunction()) {
 				return false;
 			}
 
 			Nan::TryCatch tryCatch;
-			if (hasArg(argN, info) && ConverterImpl::unwrap(val, info[argN])) {
+			if (hasArg(info, argN) && ConverterImpl::unwrap(val, info[argN])) {
 				if (tryCatch.HasCaught()) {
 					tryCatch.ReThrow();
 				}
@@ -66,7 +72,7 @@ namespace FF {
 			return false;
 		}
 
-		static bool prop(ConverterImpl::Type* val, const char* prop, v8::Local<v8::Object> opts) {
+		static bool prop(T* val, const char* prop, v8::Local<v8::Object> opts) {
 			if (!Nan::HasOwnProperty(opts, Nan::New(prop).ToLocalChecked()).FromJust()) {
 				Nan::ThrowError(
 					Nan::New(
@@ -79,7 +85,7 @@ namespace FF {
 			return AbstractConverterImpl::optProp(val, prop, opts);
 		}
 
-		static bool optProp(ConverterImpl::Type* val, const char* prop, v8::Local<v8::Object> opts) {
+		static bool optProp(T* val, const char* prop, v8::Local<v8::Object> opts) {
 			Nan::TryCatch tryCatch;
 			if (
 				Nan::HasOwnProperty(opts, Nan::New(prop).ToLocalChecked()).FromJust()

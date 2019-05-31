@@ -5,31 +5,35 @@
 #define __FF_CONVERTERS_H__
 
 namespace FF {
-	// TODO: this could simply be typedefs
+	template<class ConverterImpl, class ElementType>
+	class ArrayConverterTemplate : public AbstractConverter<ArrayConverterImpl<ConverterImpl, ElementType>, std::vector<ElementType>> {};
+	
+	template<class ConverterImpl, class ElementType>
+	class ArrayOfArraysConverterTemplate : public AbstractConverter<ArrayOfArraysConverterImpl<ConverterImpl, ElementType>, std::vector<std::vector<ElementType>>> {};
 
-	class IntConverter : public AbstractConverter<IntConverterImpl> {};
-	class UintConverter : public AbstractConverter<UintConverterImpl> {};
-	class UlongConverter : public AbstractConverter<UlongConverterImpl> {};
-	class BoolConverter : public AbstractConverter<BoolConverterImpl> {};
-	class DoubleConverter : public AbstractConverter<DoubleConverterImpl> {};
-	class FloatConverter : public AbstractConverter<FloatConverterImpl> {};
-	class StringConverter : public AbstractConverter<StringConverterImpl> {};
+	typedef AbstractConverter<IntConverterImpl, int> IntConverter;
+	typedef AbstractConverter<UintConverterImpl, uint> UintConverter;
+	typedef AbstractConverter<UlongConverterImpl, unsigned long> UlongConverter;
+	typedef AbstractConverter<BoolConverterImpl, bool> BoolConverter;
+	typedef AbstractConverter<DoubleConverterImpl, double> DoubleConverter;
+	typedef AbstractConverter<FloatConverterImpl, float> FloatConverter;
+	typedef AbstractConverter<StringConverterImpl, std::string> StringConverter;
 
-	class IntArrayConverter : public AbstractConverter<ArrayConverterImpl<IntConverterImpl>> {};
-	class UintArrayConverter : public AbstractConverter<ArrayConverterImpl<UintConverterImpl>> {};
-	class UlongArrayConverter : public AbstractConverter<ArrayConverterImpl<UlongConverterImpl>> {};
-	class BoolArrayConverter : public AbstractConverter<ArrayConverterImpl<BoolConverterImpl>> {};
-	class DoubleArrayConverter : public AbstractConverter<ArrayConverterImpl<DoubleConverterImpl>> {};
-	class FloatArrayConverter : public AbstractConverter<ArrayConverterImpl<FloatConverterImpl>> {};
-	class StringArrayConverter : public AbstractConverter<ArrayConverterImpl<StringConverterImpl>> {};
+	typedef ArrayConverterTemplate<IntConverterImpl, int> IntArrayConverter;
+	typedef ArrayConverterTemplate<UintConverterImpl, uint> UintArrayConverter;
+	typedef ArrayConverterTemplate<UlongConverterImpl, unsigned long> UlongArrayConverter;
+	typedef ArrayConverterTemplate<BoolConverterImpl, bool> BoolArrayConverter;
+	typedef ArrayConverterTemplate<DoubleConverterImpl, double> DoubleArrayConverter;
+	typedef ArrayConverterTemplate<FloatConverterImpl, float> FloatArrayConverter;
+	typedef ArrayConverterTemplate<StringConverterImpl, std::string> StringArrayConverter;
 
-	class IntArrayOfArraysConverter : public AbstractConverter<ArrayOfArraysConverterImpl<IntConverterImpl>> {};
-	class UintArrayOfArraysConverter : public AbstractConverter<ArrayOfArraysConverterImpl<UintConverterImpl>> {};
-	class UlongArrayOfArraysConverter : public AbstractConverter<ArrayOfArraysConverterImpl<UlongConverterImpl>> {};
-	class BoolArrayOfArraysConverter : public AbstractConverter<ArrayOfArraysConverterImpl<BoolConverterImpl>> {};
-	class DoubleArrayOfArraysConverter : public AbstractConverter<ArrayOfArraysConverterImpl<DoubleConverterImpl>> {};
-	class FloatArrayOfArraysConverter : public AbstractConverter<ArrayOfArraysConverterImpl<FloatConverterImpl>> {};
-	class StringArrayOfArraysConverter : public AbstractConverter<ArrayOfArraysConverterImpl<StringConverterImpl>> {};
+	typedef ArrayOfArraysConverterTemplate<IntConverterImpl, int> IntArrayOfArraysConverter;
+	typedef ArrayOfArraysConverterTemplate<UintConverterImpl, uint> UintArrayOfArraysConverter;
+	typedef ArrayOfArraysConverterTemplate<UlongConverterImpl, unsigned long> UlongArrayOfArraysConverter;
+	typedef ArrayOfArraysConverterTemplate<BoolConverterImpl, bool> BoolArrayOfArraysConverter;
+	typedef ArrayOfArraysConverterTemplate<DoubleConverterImpl, double> DoubleArrayOfArraysConverter;
+	typedef ArrayOfArraysConverterTemplate<FloatConverterImpl, float> FloatArrayOfArraysConverter;
+	typedef ArrayOfArraysConverterTemplate<StringConverterImpl, std::string> StringArrayOfArraysConverter;
 }
 
 #endif

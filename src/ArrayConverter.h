@@ -5,11 +5,9 @@
 
 namespace FF {
 
-	template <class ElementConverterImpl, class ElementCastType = ElementConverterImpl::Type>
+	template <class ElementConverterImpl, class ElementCastType>
 	class ArrayConverterImpl {
 	public:
-		typedef std::vector<ElementCastType> Type;
-
 		static const char* getTypeName() {
 			return "array";
 		}

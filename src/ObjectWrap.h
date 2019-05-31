@@ -8,37 +8,46 @@
 
 namespace FF {
 
-	template<class TClass>
+	template<class TClass, class T>
 	class ObjectWrap : public Nan::ObjectWrap {
 	public:
-		TClass::Type self;
+		T self;
 
-		TClass::Type* getNativeObjectPtr() { return &self; }
-		TClass::Type getNativeObject() { return self; }
-		void setNativeObject(TClass::Type obj) { self = obj; }
+		T* getNativeObjectPtr() { return &self; }
+		T getNativeObject() { return self; }
+		void setNativeObject(T obj) { self = obj; }
 
-		typedef InstanceConverterImpl<TClass> ConverterImpl;
-		typedef AbstractConverter<ConverterImpl> Converter;
-
-		template<class ElementCastType>
-		class ArrayWithCastConverter : public AbstractConverter<ArrayConverterImpl<TClass::ConverterImpl, ElementCastType>> {};
+		typedef InstanceConverterImpl<TClass, T> ConverterImpl;
+		typedef AbstractConverter<ConverterImpl, T> Converter;
 
 		template<class ElementCastType>
-		class ArrayOfArraysWithCastConverter : public AbstractConverter<ArrayOfArraysConverterImpl<TClass::ConverterImpl, ElementCastType>> {};
+		class ArrayWithCastConverter : public ArrayConverterTemplate<ConverterImpl, ElementCastType> {};
 
-		class ArrayConverter : public ArrayWithCastConverter<TClass::Type> {};
-		class ArrayOfArraysConverter : public ArrayOfArraysWithCastConverter<TClass::Type> {};
+		template<class ElementCastType>
+		class ArrayOfArraysWithCastConverter : public ArrayOfArraysConverterTemplate<ConverterImpl, ElementCastType> {};
+
+		typedef ArrayWithCastConverter<T> ArrayConverter;
+		typedef ArrayOfArraysWithCastConverter<T> ArrayOfArraysConverter;
 
 		static TClass* unwrap(v8::Local<v8::Value> obj) {
 			return Nan::ObjectWrap::Unwrap<TClass>(obj->ToObject(Nan::GetCurrentContext()).ToLocalChecked());
 		}
 
-		static TClass::Type unwrapSelf(Nan::NAN_METHOD_ARGS_TYPE info) {
-			return TClass::ConverterImpl::unwrapUnchecked(info.This());
+		static T unwrapSelf(Nan::NAN_METHOD_ARGS_TYPE info) {
+			return unwrapSelf(info.This());
+		}
+
+		static T unwrapSelf(Nan::NAN_GETTER_ARGS_TYPE info) {
+			return unwrapSelf(info.This());
 		}
 
 		static bool hasInstance(v8::Local<v8::Value> jsVal) {
 			return TClass::ConverterImpl::assertType(jsVal);
+		}
+
+	private:
+		static T unwrapSelf(v8::Local<v8::Object> This) {
+			return TClass::ConverterImpl::unwrapUnchecked(This);
 		}
 	};
 

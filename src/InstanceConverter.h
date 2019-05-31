@@ -7,11 +7,9 @@
 
 namespace FF {
 
-	template <class Clazz>
-	class InstanceConverterImpl : public UnwrapperBase<InstanceConverterImpl<Clazz>> {
+	template <class Clazz, class T>
+	class InstanceConverterImpl : public UnwrapperBase<InstanceConverterImpl<Clazz, T>, T> {
 	public:
-		typedef Clazz::Type Type;
-
 		static const char* getTypeName() {
 			return Clazz::getClassName();
 		}
@@ -20,11 +18,11 @@ namespace FF {
 			return !jsVal->IsNull() && !jsVal->IsUndefined() && Nan::New(Clazz::constructor)->HasInstance(jsVal);
 		}
 
-		static Clazz::Type unwrapUnchecked(v8::Local<v8::Value> jsVal) {
+		static T unwrapUnchecked(v8::Local<v8::Value> jsVal) {
 			return Nan::ObjectWrap::Unwrap<Clazz>(jsVal->ToObject(Nan::GetCurrentContext()).ToLocalChecked())->getNativeObject();
 		}
 
-		static v8::Local<v8::Value> wrap(Clazz::Type val) {
+		static v8::Local<v8::Value> wrap(T val) {
 			v8::Local<v8::Object> jsObj = FF::newInstance(Nan::New(Clazz::constructor));
 			*Nan::ObjectWrap::Unwrap<Clazz>(jsObj)->getNativeObjectPtr() = val;
 			return jsObj;

@@ -49,7 +49,7 @@ namespace FF {
 	private:
 		void run(std::shared_ptr<IWorker> worker, std::string methodName, Nan::NAN_METHOD_ARGS_TYPE info) {
 			FF::TryCatch tryCatch;
-			if (!hasArg(info.Length() - 1, info) || !info[info.Length() - 1]->IsFunction()) {
+			if (!hasArg(info, info.Length() - 1) || !info[info.Length() - 1]->IsFunction()) {
 				tryCatch.throwNew(Nan::New(Utils::formatError(methodName, "callback function required")).ToLocalChecked());
 				return;
 			}
