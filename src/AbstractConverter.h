@@ -86,7 +86,7 @@ namespace FF {
 				return true;
 			}
 
-			return AbstractConverterImpl::optProp(val, prop, opts);
+			return AbstractConverter::optProp(val, prop, opts);
 		}
 
 		static bool optProp(T* val, const char* prop, v8::Local<v8::Object> opts) {
