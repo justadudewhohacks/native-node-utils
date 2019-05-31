@@ -8,13 +8,31 @@
 
 namespace FF {
 
-	template<class TClass, class T>
-	class ObjectWrap : public Nan::ObjectWrap {
+	template<class TClass>
+	class ObjectWrapBase : public Nan::ObjectWrap {
+	public:
+		static TClass* unwrapClassPtrUnchecked(v8::Local<v8::Value> jsVal) {
+			return unwrapNanObjectWrap<TClass>(jsVal);
+		}
+
+		static TClass* unwrapThis(Nan::NAN_METHOD_ARGS_TYPE info) {
+			return unwrapClassPtrUnchecked(info.This());
+		}
+
+		static TClass* unwrapThis(Nan::NAN_GETTER_ARGS_TYPE info) {
+			return unwrapClassPtrUnchecked(info.This());
+		}
+
+		static TClass* unwrapThis(Nan::NAN_SETTER_ARGS_TYPE info) {
+			return unwrapClassPtrUnchecked(info.This());
+		}
+	};
+
+	template<class Base, class TClass, class T>
+	class ObjectWrapTemplate : public Base {
 	public:
 		T self;
 
-		T* getNativeObjectPtr() { return &self; }
-		T getNativeObject() { return self; }
 		void setNativeObject(T obj) { self = obj; }
 
 		typedef InstanceConverterImpl<TClass, T> ConverterImpl;
@@ -29,8 +47,8 @@ namespace FF {
 		typedef ArrayWithCastConverter<T> ArrayConverter;
 		typedef ArrayOfArraysWithCastConverter<T> ArrayOfArraysConverter;
 
-		static TClass* unwrap(v8::Local<v8::Value> obj) {
-			return Nan::ObjectWrap::Unwrap<TClass>(obj->ToObject(Nan::GetCurrentContext()).ToLocalChecked());
+		static bool hasInstance(v8::Local<v8::Value> jsVal) {
+			return TClass::ConverterImpl::assertType(jsVal);
 		}
 
 		static T unwrapSelf(Nan::NAN_METHOD_ARGS_TYPE info) {
@@ -41,15 +59,18 @@ namespace FF {
 			return unwrapSelf(info.This());
 		}
 
-		static bool hasInstance(v8::Local<v8::Value> jsVal) {
-			return TClass::ConverterImpl::assertType(jsVal);
+		static T unwrapSelf(Nan::NAN_SETTER_ARGS_TYPE info) {
+			return unwrapSelf(info.This());
 		}
 
 	private:
-		static T unwrapSelf(v8::Local<v8::Object> This) {
-			return TClass::ConverterImpl::unwrapUnchecked(This);
+		static T unwrapSelf(v8::Local<v8::Object> thisObj) {
+			return unwrapClassPtrUnchecked(thisObj)->self;
 		}
 	};
+
+	template<class TClass, class T>
+	class ObjectWrap : public ObjectWrapTemplate<ObjectWrapBase<TClass>, TClass, T> {};
 
 }
 

@@ -7,24 +7,24 @@
 
 namespace FF {
 
-	template <class Clazz, class T>
-	class InstanceConverterImpl : public UnwrapperBase<InstanceConverterImpl<Clazz, T>, T> {
+	template <class TClass, class T>
+	class InstanceConverterImpl : public UnwrapperBase<InstanceConverterImpl<TClass, T>, T> {
 	public:
 		static const char* getTypeName() {
-			return Clazz::getClassName();
+			return TClass::getClassName();
 		}
 
 		static bool assertType(v8::Local<v8::Value> jsVal) {
-			return !jsVal->IsNull() && !jsVal->IsUndefined() && Nan::New(Clazz::constructor)->HasInstance(jsVal);
+			return !jsVal->IsNull() && !jsVal->IsUndefined() && Nan::New(TClass::constructor)->HasInstance(jsVal);
 		}
 
 		static T unwrapUnchecked(v8::Local<v8::Value> jsVal) {
-			return Nan::ObjectWrap::Unwrap<Clazz>(jsVal->ToObject(Nan::GetCurrentContext()).ToLocalChecked())->getNativeObject();
+			return unwrapNanObjectWrap<TClass>(jsVal)->self;
 		}
 
 		static v8::Local<v8::Value> wrap(T val) {
-			v8::Local<v8::Object> jsObj = FF::newInstance(Nan::New(Clazz::constructor));
-			*Nan::ObjectWrap::Unwrap<Clazz>(jsObj)->getNativeObjectPtr() = val;
+			v8::Local<v8::Object> jsObj = FF::newInstance(Nan::New(TClass::constructor));
+			unwrapNanObjectWrap<TClass>(jsObj)->setNativeObject(val);
 			return jsObj;
 		}
 	};

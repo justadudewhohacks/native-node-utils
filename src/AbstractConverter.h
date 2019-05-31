@@ -20,8 +20,12 @@ namespace FF {
 
 		static T unwrapUnchecked(v8::Local<v8::Value> jsVal) {
 			T val;
-			unwrap(&val, jsVal);
+			ConverterImpl::unwrap(&val, jsVal);
 			return val;
+		}
+
+		static bool unwrapTo(T* val, v8::Local<v8::Value> jsVal) {
+			return ConverterImpl::unwrap(val, jsVal);
 		}
 
 		static bool arg(int argN, T* val, Nan::NAN_METHOD_ARGS_TYPE info) {

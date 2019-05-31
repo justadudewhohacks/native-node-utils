@@ -40,6 +40,16 @@ namespace FF {
 		return Nan::HasOwnProperty(obj, FF::newString(prop)).FromJust();
 	}
 
+	template<class TClass>
+	static inline TClass* unwrapNanObjectWrap(v8::Local<v8::Object> jsObj) {
+		return Nan::ObjectWrap::Unwrap<TClass>(jsObj);
+	}
+
+	template<class TClass>
+	static inline TClass* unwrapNanObjectWrap(v8::Local<v8::Value> jsVal) {
+		return unwrapNanObjectWrap<TClass>(jsVal->ToObject(Nan::GetCurrentContext()).ToLocalChecked());
+	}
+
 	class TryCatch : public Nan::TryCatch {
 	public:
 		v8::Local<v8::String> formatCatchedError(std::string methodName) {
