@@ -9,7 +9,7 @@
 namespace FF {
 
 	template<class TClass>
-	class ObjectWrapBase : public Nan::ObjectWrap {
+	class ObjectWrapBase {
 	public:
 		static TClass* unwrapClassPtrUnchecked(v8::Local<v8::Value> jsVal) {
 			return unwrapNanObjectWrap<TClass>(jsVal);
@@ -28,8 +28,8 @@ namespace FF {
 		}
 	};
 
-	template<class Base, class TClass, class T>
-	class ObjectWrapTemplate : public Base {
+	template<class TClass, class T>
+	class ObjectWrapTemplate : public ObjectWrapBase<TClass> {
 	public:
 		T self;
 
@@ -70,7 +70,7 @@ namespace FF {
 	};
 
 	template<class TClass, class T>
-	class ObjectWrap : public ObjectWrapTemplate<ObjectWrapBase<TClass>, TClass, T> {};
+	class ObjectWrap : public ObjectWrapTemplate<TClass, T>, public Nan::ObjectWrap {};
 
 }
 

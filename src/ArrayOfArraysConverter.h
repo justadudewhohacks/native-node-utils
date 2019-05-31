@@ -33,7 +33,7 @@ namespace FF {
 		static v8::Local<v8::Value> wrap(std::vector<std::vector<ElementCastType>> vec) {
 			v8::Local<v8::Array> jsArr = Nan::New<v8::Array>(vec.size());
 			for (uint i = 0; i < jsArr->Length(); i++) {
-				Nan::Set(jsArr, i, ArrayConverterImpl<Converter, T, CastType>::wrap(vec.at(i)));
+				Nan::Set(jsArr, i, ArrayConverterImpl<ElementConverterImpl, ElementCastType>::wrap(vec.at(i)));
 			}
 			return jsArr;
 		}
