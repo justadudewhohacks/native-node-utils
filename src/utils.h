@@ -9,13 +9,6 @@ typedef unsigned int uint;
 
 namespace FF {
 
-	class Utils {
-	public:
-		static std::string formatError(std::string methodName, std::string err) {
-			return std::string(methodName) + std::string(" - ") + err;
-		}
-	};
-
 	static inline v8::Local<v8::Function> getFunction(v8::Local<v8::FunctionTemplate> fnTempl) {
 		return Nan::GetFunction(fnTempl).ToLocalChecked();
 	}
@@ -49,24 +42,6 @@ namespace FF {
 	static inline TClass* unwrapNanObjectWrap(v8::Local<v8::Value> jsVal) {
 		return unwrapNanObjectWrap<TClass>(jsVal->ToObject(Nan::GetCurrentContext()).ToLocalChecked());
 	}
-
-	class TryCatch : public Nan::TryCatch {
-	public:
-		v8::Local<v8::String> formatCatchedError(std::string methodName) {
-			return Nan::New(
-				Utils::formatError(
-					std::string(methodName),
-					*Nan::Utf8String(Exception()->ToString(Nan::GetCurrentContext()).ToLocalChecked())
-				)
-			).ToLocalChecked();
-		}
-
-		void throwNew(v8::Local<v8::Value> err) {
-			Reset();
-			Nan::ThrowError(err);
-			ReThrow();
-		}
-	};
 
 }
 
