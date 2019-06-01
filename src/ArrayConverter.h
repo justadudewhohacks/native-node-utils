@@ -12,6 +12,12 @@ namespace FF {
 			return "array";
 		}
 
+		static std::vector<ElementCastType> unwrapUnchecked(v8::Local<v8::Value> jsVal) {
+			std::vector<ElementCastType> vec;
+			unwrap(&vec, jsVal);
+			return vec;
+		}
+
 		static bool unwrap(std::vector<ElementCastType>* vec, v8::Local<v8::Value> jsVal) {
 			if (!jsVal->IsArray()) {
 				return true;

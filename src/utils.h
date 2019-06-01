@@ -36,7 +36,7 @@ namespace FF {
 		return Nan::New(str).ToLocalChecked();
 	}
 
-	static inline bool hasOwnProperty(v8::Local<v8::Object> obj, char* prop) {
+	static inline bool hasOwnProperty(v8::Local<v8::Object> obj, const char* prop) {
 		return Nan::HasOwnProperty(obj, FF::newString(prop)).FromJust();
 	}
 

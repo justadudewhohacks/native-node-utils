@@ -8,8 +8,16 @@ namespace FF {
 	template <class ElementConverterImpl, class ElementCastType>
 	class ArrayOfArraysConverterImpl : private ArrayConverterImpl<ElementConverterImpl, ElementCastType> {
 	public:
+		typedef ArrayConverterImpl<ElementConverterImpl, ElementCastType> super;
+
 		static const char* getTypeName() {
 			return "array";
+		}
+
+		static std::vector<ElementCastType> unwrapUnchecked(v8::Local<v8::Value> jsVal) {
+			std::vector<std::vector<ElementCastType>> vecOfVecs;
+			unwrap(&vecOfVecs, jsVal);
+			return vecOfVecs;
 		}
 
 		static bool unwrap(std::vector<std::vector<ElementCastType>>* vecOfVecs, v8::Local<v8::Value> jsVal) {
@@ -21,7 +29,7 @@ namespace FF {
 			for (uint i = 0; i < jsArr->Length(); i++) {
 				std::vector<ElementCastType> vec;
 				Nan::TryCatch tryCatch;
-				if (ArrayConverterImpl<ElementConverterImpl, ElementCastType>::unwrap(&vec, Nan::Get(jsArr, i).ToLocalChecked())) {
+				if (super::unwrap(&vec, Nan::Get(jsArr, i).ToLocalChecked())) {
 					tryCatch.ReThrow();
 					return true;
 				}
@@ -33,7 +41,7 @@ namespace FF {
 		static v8::Local<v8::Value> wrap(std::vector<std::vector<ElementCastType>> vec) {
 			v8::Local<v8::Array> jsArr = Nan::New<v8::Array>(vec.size());
 			for (uint i = 0; i < jsArr->Length(); i++) {
-				Nan::Set(jsArr, i, ArrayConverterImpl<ElementConverterImpl, ElementCastType>::wrap(vec.at(i)));
+				Nan::Set(jsArr, i, super::wrap(vec.at(i)));
 			}
 			return jsArr;
 		}

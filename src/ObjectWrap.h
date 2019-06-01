@@ -31,6 +31,8 @@ namespace FF {
 	template<class TClass, class T>
 	class ObjectWrapTemplate : public ObjectWrapBase<TClass> {
 	public:
+		typedef ObjectWrapBase<TClass> super;
+
 		T self;
 
 		void setNativeObject(T obj) { self = obj; }
@@ -65,7 +67,7 @@ namespace FF {
 
 	private:
 		static T unwrapSelf(v8::Local<v8::Object> thisObj) {
-			return unwrapClassPtrUnchecked(thisObj)->self;
+			return super::unwrapClassPtrUnchecked(thisObj)->self;
 		}
 	};
 

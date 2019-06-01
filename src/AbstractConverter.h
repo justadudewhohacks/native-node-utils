@@ -10,6 +10,7 @@ namespace FF {
 		static const char* getTypeName()
 		static v8::Local<v8::Value> wrap(T val)
 		static bool unwrap(T* pVal, v8::Local<v8::Value> jsVal)
+		static T unwrapUnchecked(v8::Local<v8::Value> jsVal)
 	*/
 	template <class ConverterImpl, class T>
 	class AbstractConverter {
@@ -19,9 +20,7 @@ namespace FF {
 		}
 
 		static T unwrapUnchecked(v8::Local<v8::Value> jsVal) {
-			T val;
-			ConverterImpl::unwrap(&val, jsVal);
-			return val;
+			return ConverterImpl::unwrapUnchecked(jsVal);
 		}
 
 		static bool unwrapTo(T* val, v8::Local<v8::Value> jsVal) {
