@@ -8,19 +8,20 @@ namespace FF {
 	template <class ElementConverterImpl, class ElementCastType>
 	class ArrayOfArraysConverterImpl : private ArrayConverterImpl<ElementConverterImpl, ElementCastType> {
 	public:
+		typedef std::vector<std::vector<ElementCastType>> Type;
 		typedef ArrayConverterImpl<ElementConverterImpl, ElementCastType> super;
 
 		static const char* getTypeName() {
 			return "array";
 		}
 
-		static std::vector<ElementCastType> unwrapUnchecked(v8::Local<v8::Value> jsVal) {
-			std::vector<std::vector<ElementCastType>> vecOfVecs;
+		static Type unwrapUnchecked(v8::Local<v8::Value> jsVal) {
+			Type vecOfVecs;
 			unwrap(&vecOfVecs, jsVal);
 			return vecOfVecs;
 		}
 
-		static bool unwrap(std::vector<std::vector<ElementCastType>>* vecOfVecs, v8::Local<v8::Value> jsVal) {
+		static bool unwrap(Type* vecOfVecs, v8::Local<v8::Value> jsVal) {
 			if (!jsVal->IsArray()) {
 				return true;
 			}
@@ -38,7 +39,7 @@ namespace FF {
 			return false;
 		}
 
-		static v8::Local<v8::Value> wrap(std::vector<std::vector<ElementCastType>> vec) {
+		static v8::Local<v8::Value> wrap(Type vec) {
 			v8::Local<v8::Array> jsArr = Nan::New<v8::Array>(vec.size());
 			for (uint i = 0; i < jsArr->Length(); i++) {
 				Nan::Set(jsArr, i, super::wrap(vec.at(i)));

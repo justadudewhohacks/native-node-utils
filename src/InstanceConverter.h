@@ -10,6 +10,8 @@ namespace FF {
 	template <class TClass, class T>
 	class InstanceConverterImpl : public UnwrapperBase<InstanceConverterImpl<TClass, T>, T> {
 	public:
+		typedef T Type;
+
 		static const char* getTypeName() {
 			return TClass::getClassName();
 		}

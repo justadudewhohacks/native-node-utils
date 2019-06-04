@@ -1,5 +1,6 @@
 #include "AbstractConverter.h"
 #include "UnwrapperBase.h"
+#include "utils.h"
 
 #ifndef __FF_PRIMITIVE_TYPE_CONVERTERS_H__
 #define __FF_PRIMITIVE_TYPE_CONVERTERS_H__
@@ -16,6 +17,8 @@ namespace FF {
 
 	class IntConverterImpl : public PrimitiveTypeConverter<IntConverterImpl, int> {
 	public:
+		typedef int Type;
+
 		static const char* getTypeName() {
 			return "int";
 		}
@@ -31,6 +34,8 @@ namespace FF {
 
 	class UintConverterImpl : public PrimitiveTypeConverter<UintConverterImpl, uint> {
 	public:
+		typedef uint Type;
+
 		static const char* getTypeName() {
 			return "uint";
 		}
@@ -44,8 +49,27 @@ namespace FF {
 		}
 	};
 
-	class UlongConverterImpl : public PrimitiveTypeConverter<UlongConverterImpl, unsigned long> {
+	class LongConverterImpl : public PrimitiveTypeConverter<LongConverterImpl, long> {
 	public:
+		typedef long Type;
+
+		static const char* getTypeName() {
+			return "long";
+		}
+
+		static bool assertType(v8::Local<v8::Value> jsVal) {
+			return jsVal->IsNumber();
+		}
+
+		static long unwrapUnchecked(v8::Local<v8::Value> jsVal) {
+			return (long)Nan::To<int>(jsVal).ToChecked();
+		}
+	};
+
+	class UlongConverterImpl : public PrimitiveTypeConverter<UlongConverterImpl, ulong> {
+	public:
+		typedef ulong Type;
+
 		static const char* getTypeName() {
 			return "ulong";
 		}
@@ -54,13 +78,49 @@ namespace FF {
 			return jsVal->IsNumber();
 		}
 
-		static unsigned long unwrapUnchecked(v8::Local<v8::Value> jsVal) {
-			return (unsigned long)Nan::To<uint>(jsVal).ToChecked();
+		static ulong unwrapUnchecked(v8::Local<v8::Value> jsVal) {
+			return (ulong)Nan::To<uint>(jsVal).ToChecked();
+		}
+	};
+
+	class CharConverterImpl : public PrimitiveTypeConverter<CharConverterImpl, char> {
+	public:
+		typedef char Type;
+
+		static const char* getTypeName() {
+			return "char";
+		}
+
+		static bool assertType(v8::Local<v8::Value> jsVal) {
+			return jsVal->IsNumber();
+		}
+
+		static char unwrapUnchecked(v8::Local<v8::Value> jsVal) {
+			return (char)Nan::To<int>(jsVal).ToChecked();
+		}
+	};
+
+	class UcharConverterImpl : public PrimitiveTypeConverter<UcharConverterImpl, uchar> {
+	public:
+		typedef uchar Type;
+
+		static const char* getTypeName() {
+			return "uchar";
+		}
+
+		static bool assertType(v8::Local<v8::Value> jsVal) {
+			return jsVal->IsNumber();
+		}
+
+		static char unwrapUnchecked(v8::Local<v8::Value> jsVal) {
+			return (uchar)Nan::To<uint>(jsVal).ToChecked();
 		}
 	};
 
 	class BoolConverterImpl : public PrimitiveTypeConverter<BoolConverterImpl, bool> {
 	public:
+		typedef bool Type;
+
 		static const char* getTypeName() {
 			return "bool";
 		}
@@ -76,6 +136,8 @@ namespace FF {
 
 	class DoubleConverterImpl : public PrimitiveTypeConverter<DoubleConverterImpl, double> {
 	public:
+		typedef double Type;
+
 		static const char* getTypeName() {
 			return "double";
 		}
@@ -91,6 +153,8 @@ namespace FF {
 
 	class FloatConverterImpl : public PrimitiveTypeConverter<FloatConverterImpl, float> {
 	public:
+		typedef float Type;
+
 		static const char* getTypeName() {
 			return "float";
 		}
@@ -106,6 +170,8 @@ namespace FF {
 
 	class StringConverterImpl : public UnwrapperBase<StringConverterImpl, std::string> {
 	public:
+		typedef std::string Type;
+
 		static const char* getTypeName() {
 			return "string";
 		}

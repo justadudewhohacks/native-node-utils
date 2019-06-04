@@ -6,6 +6,8 @@
 #define __FF_UTILS_H__
 
 typedef unsigned int uint;
+typedef unsigned char uchar;
+typedef unsigned long ulong;
 
 namespace FF {
 

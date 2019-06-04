@@ -1,7 +1,8 @@
 #include "utils.h"
-#include "InstanceConverter.h"
 #include "ArrayConverter.h"
 #include "ArrayOfArraysConverter.h"
+#include "InstanceConverter.h"
+#include "TryCatch.h"
 
 #ifndef __FF_OBJECT_WRAP_H__
 #define __FF_OBJECT_WRAP_H__
@@ -38,7 +39,7 @@ namespace FF {
 		void setNativeObject(T obj) { self = obj; }
 
 		typedef InstanceConverterImpl<TClass, T> ConverterImpl;
-		typedef AbstractConverter<ConverterImpl, T> Converter;
+		typedef AbstractConverter<ConverterImpl> Converter;
 
 		template<class ElementCastType>
 		class ArrayWithCastConverter : public ArrayConverterTemplate<ConverterImpl, ElementCastType> {};
@@ -63,6 +64,32 @@ namespace FF {
 
 		static T unwrapSelf(Nan::NAN_SETTER_ARGS_TYPE info) {
 			return unwrapSelf(info.This());
+		}
+
+	protected:
+		typedef TClass ClassType;
+
+		template<class TPropertyConverter>
+		static void setter(
+			const char* setterName,
+			Nan::NAN_SETTER_ARGS_TYPE info,
+			v8::Local<v8::Value> value,
+			void(*setProperty)(TClass*, typename TPropertyConverter::Type)
+		) {
+			FF::TryCatch tryCatch(setterName);
+			typename TPropertyConverter::Type val;
+			if (TPropertyConverter::unwrapTo(&val, value)) {
+				return tryCatch.reThrow();
+			}
+			setProperty(super::unwrapThis(info), val);
+		}
+
+		template<class TPropertyConverter>
+		static void getter(
+			Nan::NAN_GETTER_ARGS_TYPE info,
+			typename TPropertyConverter::Type(*getProperty)(TClass*)
+		) {
+			info.GetReturnValue().Set(TPropertyConverter::wrap(getProperty(super::unwrapThis(info))));
 		}
 
 	private:
