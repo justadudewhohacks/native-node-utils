@@ -41,6 +41,9 @@ namespace FF {
 		typedef InstanceConverterImpl<TClass, T> ConverterImpl;
 		typedef AbstractConverter<ConverterImpl> Converter;
 
+		template<class CastType>
+		class WithCastConverter : public AbstractConverter<InstanceConverterImpl<TClass, CastType>> {};
+
 		template<class ElementCastType>
 		class ArrayWithCastConverter : public ArrayConverterTemplate<ConverterImpl, ElementCastType> {};
 
