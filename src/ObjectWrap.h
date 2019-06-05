@@ -53,6 +53,26 @@ namespace FF {
 		typedef ArrayWithCastConverter<T> ArrayConverter;
 		typedef ArrayOfArraysWithCastConverter<T> ArrayOfArraysConverter;
 
+		template<class WorkerImpl>
+		class SyncBinding : public FF::SyncBindingBase {
+		public:
+			SyncBinding(std::string name, Nan::NAN_METHOD_ARGS_TYPE info) : FF::SyncBindingBase(
+				std::make_shared<WorkerImpl>(unwrapSelf(info)),
+				std::string(TClass::getClassName()) + "::" + name,
+				info
+			) {};
+		};
+
+		template<class WorkerImpl>
+		class AsyncBinding : public FF::AsyncBindingBase {
+		public:
+			AsyncBinding(std::string name, Nan::NAN_METHOD_ARGS_TYPE info) : FF::AsyncBindingBase(
+				std::make_shared<WorkerImpl>(unwrapSelf(info)),
+				std::string(TClass::getClassName()) + "::" + name + "Async",
+				info
+			) {};
+		};
+
 		static bool hasInstance(v8::Local<v8::Value> jsVal) {
 			return TClass::ConverterImpl::assertType(jsVal);
 		}
