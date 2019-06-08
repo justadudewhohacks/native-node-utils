@@ -7,7 +7,7 @@ namespace FF {
 
 	/*
 	ConverterImpl implements:
-		static const char* getTypeName()
+		static std::string getTypeName()
 		static v8::Local<v8::Value> wrap(ConverterImpl::Type val)
 		static bool unwrap(ConverterImpl::Type* pVal, v8::Local<v8::Value> jsVal)
 		static ConverterImpl::Type unwrapUnchecked(v8::Local<v8::Value> jsVal)
@@ -16,6 +16,10 @@ namespace FF {
 	class AbstractConverter {
 	public:
 		typedef typename ConverterImpl::Type Type;
+
+		static bool assertType(v8::Local<v8::Value> jsVal) {
+			return ConverterImpl::assertType(jsVal);
+		}
 
 		static v8::Local<v8::Value> wrap(Type val) {
 			return ConverterImpl::wrap(val);

@@ -12,7 +12,7 @@ namespace FF {
 	public:
 		typedef T Type;
 
-		static const char* getTypeName() {
+		static std::string getTypeName() {
 			return TClass::getClassName();
 		}
 

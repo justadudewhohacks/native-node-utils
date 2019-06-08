@@ -11,8 +11,12 @@ namespace FF {
 		typedef std::vector<std::vector<ElementCastType>> Type;
 		typedef ArrayConverterImpl<ElementConverterImpl, ElementCastType> super;
 
-		static const char* getTypeName() {
-			return "array";
+		static std::string getTypeName() {
+			return std::string("array of arrays of ") + ElementConverterImpl::getTypeName();
+		}
+
+		static bool assertType(v8::Local<v8::Value> jsVal) {
+			return jsVal->IsArray();
 		}
 
 		static Type unwrapUnchecked(v8::Local<v8::Value> jsVal) {

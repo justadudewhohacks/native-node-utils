@@ -19,8 +19,8 @@ namespace FF {
 	public:
 		typedef int Type;
 
-		static const char* getTypeName() {
-			return "int";
+		static std::string getTypeName() {
+			return std::string("int");
 		}
 
 		static bool assertType(v8::Local<v8::Value> jsVal) {
@@ -36,8 +36,8 @@ namespace FF {
 	public:
 		typedef uint Type;
 
-		static const char* getTypeName() {
-			return "uint";
+		static std::string getTypeName() {
+			return std::string("uint");
 		}
 
 		static bool assertType(v8::Local<v8::Value> jsVal) {
@@ -53,8 +53,8 @@ namespace FF {
 	public:
 		typedef long Type;
 
-		static const char* getTypeName() {
-			return "long";
+		static std::string getTypeName() {
+			return std::string("long");
 		}
 
 		static bool assertType(v8::Local<v8::Value> jsVal) {
@@ -70,8 +70,8 @@ namespace FF {
 	public:
 		typedef ulong Type;
 
-		static const char* getTypeName() {
-			return "ulong";
+		static std::string getTypeName() {
+			return std::string("ulong");
 		}
 
 		static bool assertType(v8::Local<v8::Value> jsVal) {
@@ -87,8 +87,8 @@ namespace FF {
 	public:
 		typedef char Type;
 
-		static const char* getTypeName() {
-			return "char";
+		static std::string getTypeName() {
+			return std::string("char");
 		}
 
 		static bool assertType(v8::Local<v8::Value> jsVal) {
@@ -104,8 +104,8 @@ namespace FF {
 	public:
 		typedef uchar Type;
 
-		static const char* getTypeName() {
-			return "uchar";
+		static std::string getTypeName() {
+			return std::string("uchar");
 		}
 
 		static bool assertType(v8::Local<v8::Value> jsVal) {
@@ -121,8 +121,8 @@ namespace FF {
 	public:
 		typedef bool Type;
 
-		static const char* getTypeName() {
-			return "bool";
+		static std::string getTypeName() {
+			return std::string("bool");
 		}
 
 		static bool assertType(v8::Local<v8::Value> jsVal) {
@@ -138,8 +138,8 @@ namespace FF {
 	public:
 		typedef double Type;
 
-		static const char* getTypeName() {
-			return "double";
+		static std::string getTypeName() {
+			return std::string("double");
 		}
 
 		static bool assertType(v8::Local<v8::Value> jsVal) {
@@ -155,8 +155,8 @@ namespace FF {
 	public:
 		typedef float Type;
 
-		static const char* getTypeName() {
-			return "float";
+		static std::string getTypeName() {
+			return std::string("float");
 		}
 
 		static bool assertType(v8::Local<v8::Value> jsVal) {
@@ -172,8 +172,8 @@ namespace FF {
 	public:
 		typedef std::string Type;
 
-		static const char* getTypeName() {
-			return "string";
+		static std::string getTypeName() {
+			return std::string("string");
 		}
 
 		static bool assertType(v8::Local<v8::Value> jsVal) {

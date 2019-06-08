@@ -9,19 +9,18 @@ namespace FF {
 	class IWorker {
 	public:
 		virtual std::string execute() = 0;
-		virtual v8::Local<v8::Value> getReturnValue() = 0;
-		virtual bool unwrapRequiredArgs(Nan::NAN_METHOD_ARGS_TYPE info) = 0;
-		virtual bool unwrapOptionalArgs(Nan::NAN_METHOD_ARGS_TYPE info) = 0;
-		virtual bool hasOptArgsObject(Nan::NAN_METHOD_ARGS_TYPE info) = 0;
-		virtual bool unwrapOptionalArgsFromOpts(Nan::NAN_METHOD_ARGS_TYPE info) = 0;
-
-		bool applyUnwrappers(Nan::NAN_METHOD_ARGS_TYPE info) {
-			return unwrapRequiredArgs(info)
-				|| (!hasOptArgsObject(info) && unwrapOptionalArgs(info))
-				|| (hasOptArgsObject(info) && unwrapOptionalArgsFromOpts(info));
-		}
+		virtual bool applyUnwrappers(Nan::NAN_METHOD_ARGS_TYPE info) = 0;
 	};
 
+	class ISyncWorker : public IWorker {
+	public:
+		virtual v8::Local<v8::Value> getReturnValue(Nan::NAN_METHOD_ARGS_TYPE info) = 0;
+	};
+
+	class IAsyncWorker : public IWorker {
+	public:
+		virtual v8::Local<v8::Value> getReturnValue() = 0;
+	};
 }
 
 #endif

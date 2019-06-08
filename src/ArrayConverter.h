@@ -10,8 +10,12 @@ namespace FF {
 	public:
 		typedef std::vector<ElementCastType> Type;
 
-		static const char* getTypeName() {
-			return "array";
+		static std::string getTypeName() {
+			return std::string("array of ") + ElementConverterImpl::getTypeName();
+		}
+
+		static bool assertType(v8::Local<v8::Value> jsVal) {
+			return jsVal->IsArray();
 		}
 
 		static Type unwrapUnchecked(v8::Local<v8::Value> jsVal) {

@@ -3,6 +3,7 @@
 #include "ArrayOfArraysConverter.h"
 #include "AsyncWorker.h"
 #include "Binding.h"
+#include "BindingBase.h"
 #include "Converters.h"
 #include "InstanceConverter.h"
 #include "IWorker.h"

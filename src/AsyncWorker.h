@@ -9,11 +9,11 @@ namespace FF {
 
 	class AsyncWorker : public Nan::AsyncWorker {
 	public:
-		std::shared_ptr<IWorker> worker;
+		std::shared_ptr<IAsyncWorker> worker;
 
 		AsyncWorker(
 			Nan::Callback* callback,
-			std::shared_ptr<IWorker> worker
+			std::shared_ptr<IAsyncWorker> worker
 		) : Nan::AsyncWorker(callback), worker(worker) {}
 		~AsyncWorker() {}
 
