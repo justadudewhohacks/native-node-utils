@@ -123,15 +123,6 @@ namespace FF {
 			);
 		};
 
-	private:
-		static T unwrapSelf(v8::Local<v8::Object> thisObj) {
-			return super::unwrapClassPtrUnchecked(thisObj)->self;
-		}
-	};
-
-	template<class TClass, class T>
-	class ObjectWrap : public ObjectWrapTemplate<TClass, T>, public Nan::ObjectWrap {
-	public:
 		class ConstructorBase : public BindingBase, public ISyncWorker {
 		public:
 			bool applyUnwrappers(Nan::NAN_METHOD_ARGS_TYPE info) {
@@ -146,6 +137,7 @@ namespace FF {
 				TClass* self = new TClass();
 				self->Wrap(info.Holder());
 				self->setNativeObject(nativeObject);
+				modifySelf(self);
 				return info.Holder();
 			}
 
@@ -162,7 +154,21 @@ namespace FF {
 		protected:
 			T nativeObject;
 			std::function<T(void)> executeBinding;
+			std::function<void(TClass* self)> modifySelf = [](TClass*) {};
 		};
+
+	private:
+		static T unwrapSelf(v8::Local<v8::Object> thisObj) {
+			return super::unwrapClassPtrUnchecked(thisObj)->self;
+		}
+	};
+
+	template<class TClass, class T>
+	class ObjectWrap : public ObjectWrapTemplate<TClass, T>, public Nan::ObjectWrap {
+	public:
+		void Wrap(v8::Local<v8::Object> object) {
+			Nan::ObjectWrap::Wrap(object);
+		}
 	};
 
 }
