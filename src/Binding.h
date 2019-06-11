@@ -44,8 +44,10 @@ namespace FF {
 
 	template<class WorkerImpl>
 	static void syncBinding(std::string methodNamespace, std::string methodName, Nan::NAN_METHOD_ARGS_TYPE info) {
+		auto worker = std::make_shared<WorkerImpl>();
+		worker->setup();
 		executeSyncBinding(
-			std::make_shared<WorkerImpl>(),
+			worker,
 			methodNamespace + "::" + methodName,
 			info
 		);
@@ -53,8 +55,10 @@ namespace FF {
 
 	template<class WorkerImpl>
 	static void asyncBinding(std::string methodNamespace, std::string methodName, Nan::NAN_METHOD_ARGS_TYPE info) {
+		auto worker = std::make_shared<WorkerImpl>();
+		worker->setup();
 		executeAsyncBinding(
-			std::make_shared<WorkerImpl>(),
+			worker,
 			methodNamespace + "::" + methodName + "Async",
 			info
 		);
